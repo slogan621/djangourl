@@ -29,9 +29,22 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "djangourls.h" 
 
+/**
+ * Constructor.
+ */
+
 Url::Url()
 {
 }
+
+
+/**
+ * Constructor.
+ *
+ * @param[in] re regular expression 
+ *
+ * @param[in] handler an instance of UrlHandler, called if there is a match.
+ */
 
 Url::Url(std::string &re, UrlHandler *handler)
 {
@@ -39,11 +52,26 @@ Url::Url(std::string &re, UrlHandler *handler)
     SetHandler(handler);
 }
 
+
+/**
+ * Set the handler to be called on a match. Similar to method portion of
+ * urls.py entry.
+ * 
+ * @param[in] handler an instance of UrlHandler, called if there is a match.
+ */
+
 void
 Url::SetHandler(UrlHandler *handler)
 {
     m_handler = handler;
 }
+
+
+/**
+ * Set the regular expression.
+ *
+ * @param[in] re regular expression that this URL tries to match.
+ */
 
 void
 Url::SetRe(std::string &re)
@@ -51,6 +79,13 @@ Url::SetRe(std::string &re)
     m_re = re;
     m_rx.assign(re, boost::regex_constants::icase);  // compile the regex
 }
+
+
+/**
+ * Perform a match operation and invoke corresponding function if found.
+ *
+ * @param[in] val the string to match.
+ */
 
 bool 
 Url::Match(std::string &val)
@@ -65,6 +100,11 @@ Url::Match(std::string &val)
     return ret;
 }
 
+
+/**
+ * Add the URL to the list checked by the URL processor.
+ */
+
 void
 Url::Register()
 {
@@ -73,6 +113,11 @@ Url::Register()
         processor->Register(*this);
     }
 }
+
+
+/**
+ * Remove the URL from the list checked by the URL processor.
+ */
 
 void
 Url::Unregister()
@@ -83,6 +128,13 @@ Url::Unregister()
     }
 }
 
+
+/**
+ * Get the UrlProcessor singleton.
+ *
+ * @return UrlProcessor instance (NULL if couldn't create).
+ */
+
 UrlProcessor *
 UrlProcessor::GetInstance()
 {
@@ -92,6 +144,15 @@ UrlProcessor::GetInstance()
     }
     return m_instance;
 }
+
+
+/**
+ * Walk the list of URLs and stop when a match is found, or EOL
+ *
+ * @param[in] val pattern to match.
+ *
+ * @return if a match is found, True, else False.
+ */
 
 bool 
 UrlProcessor::Match(std::string &val)
@@ -110,16 +171,29 @@ UrlProcessor::Match(std::string &val)
     return ret;
 }
 
+
+/**
+ * Push URL to end of list checked by processor.
+ *
+ * @param[in] url Url object to be checked.
+ */
+ 
 void 
 UrlProcessor::Register(const Url &url)
 {
     m_urls.push_back(url);
 }
 
+
+/**
+ * Remove URL from list of those checked by processor.
+ *
+ * @param[in] url Url object to be removed.
+ */
+
 void 
 UrlProcessor::Unregister(const Url &url)
 {
     m_urls.remove(url);
 }
-
 
